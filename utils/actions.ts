@@ -1,9 +1,15 @@
 "use server";
 import db from "./db";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
-import { profileSchema, validateWithZodSchema } from "./schemas";
+import {
+  clubSchema,
+  imageSchema,
+  profileSchema,
+  validateWithZodSchema,
+} from "./schemas";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { uploadImage } from "./supabase";
 
 const getAuthUser = async () => {
   const user = await currentUser();
@@ -101,5 +107,40 @@ export const updateProfileImageAction = async (
   prevState: { message?: string; error?: Record<string, string[]> },
   formData: FormData
 ): Promise<{ message: string }> => {
-  return { message: "Profile image updated successfully" };
+  const user = await getAuthUser();
+  try {
+    const image = formData.get("image") as File;
+    const validatedData = validateWithZodSchema(imageSchema, { image });
+    const fullPath = await uploadImage(validatedData.image);
+
+    await db.profile.update({
+      where: { clerkId: user.id },
+      data: { image: fullPath },
+    });
+    revalidatePath("/profile");
+    return { message: "Profile image updated successfully" };
+  } catch (error) {
+    return {
+      message: error instanceof Error ? error.message : "An error occurred",
+    };
+  }
+};
+
+export const createClubAction = async (
+  prevState: { message?: string; error?: Record<string, string[]> },
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+  try {
+    const values = Object.fromEntries(formData);
+    const validatedData = validateWithZodSchema(clubSchema, {
+      ...values,
+      creatorId: user.id,
+    });
+  } catch (error) {
+    return {
+      message: error instanceof Error ? error.message : "An error occurred",
+    };
+  }
+  redirect("/");
 };

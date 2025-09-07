@@ -16,10 +16,92 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  clerkId   String   @unique
-  username  String   @unique
-  image     String
+  id           String          @id @default(uuid())
+  clerkId      String          @unique
+  username     String          @unique
+  image        String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  clubsCreated Club[]          @relation("ClubCreator")
+  clubsJoined  Club[]          @relation("ClubMembers")
+  clubNotes    ClubBookNotes[]
+}
+
+enum clubLocation {
+  ONLINE
+  IN_PERSON
+  HYBRID
+}
+
+model Club {
+  id          String       @id @default(uuid())
+  name        String
+  description String
+  category    String
+  image       String
+  rules       String?
+  isPublic    Boolean      @default(true)
+  location    clubLocation @default(ONLINE)
+  currentBook String?
+  meetingTime DateTime?
+  capacity    Int?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  creator     User         @relation("ClubCreator", fields: [creatorId], references: [clerkId], onDelete: Cascade)
+  creatorId   String
+  members     User[]       @relation("ClubMembers")
+  books       ClubBook[]
+}
+
+model Book {
+  id          String     @id @default(uuid())
+  title       String
+  author      String
+  description String?
+  coverImage  String?
+  publishedAt DateTime?
+  isbn        String?    @unique
+  clubs       ClubBook[]
+}
+
+enum ReadingStatus {
+  TO_BE_READ
+  CURRENTLY_READING
+  FINISHED
+  DROPPED
+}
+
+model ClubBook {
+  id     String @id @default(uuid())
+  club   Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  clubId String
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId String
+
+  notes ClubBookNotes[]
+
+  addedAt DateTime  @default(now())
+  endDate DateTime?
+
+  status ReadingStatus @default(TO_BE_READ)
+
+  @@unique([clubId, bookId])
+}
+
+model ClubBookNotes {
+  id         String          @id @default(uuid())
+  clubBook   ClubBook        @relation(fields: [clubBookId], references: [id], onDelete: Cascade)
+  clubBookId String
+  user       User            @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  userId     String
+  rating     Int?
+  notes      String?
+  parent     ClubBookNotes?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId   String?
+  replies    ClubBookNotes[] @relation("Replies")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([clubBookId, userId])
 }
