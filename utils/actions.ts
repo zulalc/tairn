@@ -20,7 +20,7 @@ const getAuthUser = async () => {
 
 export const fetchProfile = async () => {
   const user = await getAuthUser();
-  const profile = await db.profile.findUnique({
+  const profile = await db.user.findUnique({
     where: { clerkId: user.id },
   });
   if (!profile) return redirect("/profile/create");
@@ -37,7 +37,7 @@ export const createProfileAction = async (
     const values = Object.fromEntries(formData);
     const validatedData = validateWithZodSchema(profileSchema, values);
 
-    await db.profile.create({
+    await db.user.create({
       data: {
         clerkId: user.id,
         username: validatedData.username,
@@ -79,7 +79,7 @@ export const updateProfileAction = async (
       }
     }
 
-    await db.profile.update({
+    await db.user.update({
       where: { clerkId: user.id },
       data: validatedData,
     });
@@ -95,7 +95,7 @@ export const fetchProfileImage = async () => {
   const user = await currentUser();
   if (!user) return null;
 
-  const profile = await db.profile.findUnique({
+  const profile = await db.user.findUnique({
     where: { clerkId: user.id },
     select: { image: true },
   });
@@ -113,7 +113,7 @@ export const updateProfileImageAction = async (
     const validatedData = validateWithZodSchema(imageSchema, { image });
     const fullPath = await uploadImage(validatedData.image);
 
-    await db.profile.update({
+    await db.user.update({
       where: { clerkId: user.id },
       data: { image: fullPath },
     });
