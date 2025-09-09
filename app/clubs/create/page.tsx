@@ -1,8 +1,8 @@
-import CategoriesInput from "@/components/form/CategoriesInput";
 import FormContainer from "@/components/form/FormContainer";
 import FormInput from "@/components/form/FormInput";
 import TextAreaInput from "@/components/form/TextAreaInput";
 import { createClubAction } from "@/utils/actions";
+import GenresInput from "@/components/form/GenresInput";
 
 function CreateClub() {
   return (
@@ -14,22 +14,26 @@ function CreateClub() {
         </h3>
 
         <FormContainer action={createClubAction}>
-          <div className="grid md:grid-cols-2 gap-8 mb-4">
-            <FormInput
-              name="name"
-              type="text"
-              label="Club Name"
-              placeholder="Club Name"
-            />
+          <div className="grid gap-8 mb-4">
+            <div className="grid md:grid-cols-2 gap-8">
+              <FormInput
+                name="name"
+                type="text"
+                label="Club Name"
+                placeholder="Club Name"
+              />
+              <TextAreaInput
+                name="description"
+                labelText="Club Description"
+                placeholder="Tell people about your club..."
+                required
+              />
+            </div>
 
-            <CategoriesInput />
-
-            <TextAreaInput
-              name="description"
-              labelText="Club Description"
-              placeholder="Tell people about your club..."
-              required
-            />
+            <div>
+              <h3 className="text-lg mt-10 mb-6 font-medium">Genres</h3>
+              <GenresInput />
+            </div>
           </div>
         </FormContainer>
       </div>
