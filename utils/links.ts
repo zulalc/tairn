@@ -5,13 +5,22 @@ type NavLink = {
 
 export const links: NavLink[] = [
   {
-    href: "/favorites",
-    label: "favorites",
+    href: "/profile",
+    label: "profile",
+  },
+  {
+    href: "/dashboard",
+    label: "dashboard",
   },
   {
     href: "/clubs",
     label: "clubs",
   },
+  {
+    href: "/favorites",
+    label: "favorites",
+  },
+
   {
     href: "/clubs/create",
     label: "create club",
@@ -19,13 +28,5 @@ export const links: NavLink[] = [
   {
     href: "/books",
     label: "books",
-  },
-  {
-    href: "/dashboard",
-    label: "dashboard",
-  },
-  {
-    href: "/profile",
-    label: "profile",
   },
 ];
