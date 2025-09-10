@@ -17,7 +17,7 @@ function LinksDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex gap-4 max-w-[100px] ro">
+        <Button variant="outline" className="flex gap-4 max-w-[100px] ">
           <TbAlignLeft className="w-6 h-6" />
           <UserIcon />
         </Button>

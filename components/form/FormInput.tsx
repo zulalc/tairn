@@ -17,8 +17,8 @@ function FormInput({
   placeholder,
 }: FormInputProps) {
   return (
-    <div className="mb-2">
-      <Label htmlFor={name} className="block mb-1 font-medium">
+    <div className="gap-2">
+      <Label htmlFor={name} className="block mb-2 font-medium">
         {label || name}
       </Label>
       <Input
