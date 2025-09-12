@@ -41,7 +41,7 @@ export const clubSchema = z.object({
   name: z.string().min(3).max(50),
   description: z.string().min(10).max(500),
   location: z.enum(["ONLINE", "IN_PERSON", "HYBRID"]).default("ONLINE"),
-  category: z.string(),
+  genre: z.string(),
   rules: z.string().max(300).optional(),
   isPublic: z.coerce.boolean().default(true),
   currentBook: z.uuid().optional(),

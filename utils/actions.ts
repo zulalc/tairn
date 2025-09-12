@@ -133,9 +133,13 @@ export const createClubAction = async (
   const user = await getAuthUser();
   try {
     const values = Object.fromEntries(formData);
-    const validatedData = validateWithZodSchema(clubSchema, {
-      ...values,
-      creatorId: user.id,
+    const image = formData.get("image") as File;
+    const validatedData = validateWithZodSchema(clubSchema, values);
+
+    const validatedImage = validateWithZodSchema(imageSchema, { image: image });
+    const path = await uploadImage(validatedImage.image);
+    await db.club.create({
+      data: { ...validatedData, image: path, creatorId: user.id },
     });
   } catch (error) {
     return {

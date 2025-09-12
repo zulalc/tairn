@@ -5,18 +5,24 @@ import { createClubAction } from "@/utils/actions";
 import GenresInput from "@/components/form/GenresInput";
 import BooleanInput from "@/components/form/BooleanInput";
 import LocationInput from "@/components/form/LocationInput";
+import CounterInput from "@/components/form/CounterInput";
+import CurrentBookSelector from "@/components/form/CurrentBookSelector";
+import { Button } from "@/components/ui/button";
 function CreateClub() {
   return (
     <section className="flex flex-col items-center min-h-screen py-10 px-4">
-      <h1 className="text-2xl font-semibold mb-8">Create Club</h1>
-      <div className="border p-8 rounded-xl shadow-sm max-w-3xl w-full">
-        <h3 className="text-lg mb-6 font-medium text-center">
+      <h1 className="text-3xl sm:text-4xl font-semibold mb-8 text-center">
+        Create Club
+      </h1>
+
+      <div className="border p-8 rounded-xl shadow-md w-full max-w-4xl">
+        <h3 className="text-xl sm:text-2xl mb-6 font-semibold text-center">
           General Information
         </h3>
 
         <FormContainer action={createClubAction}>
-          <div className="grid gap-10">
-            <div className="grid md:grid-cols-3 gap-6">
+          <div className="flex flex-col gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <FormInput
                 name="name"
                 type="text"
@@ -26,7 +32,7 @@ function CreateClub() {
 
               <LocationInput name="location" label="Meeting Location" />
 
-              <div className="flex items-end">
+              <div className="flex items-center md:justify-end">
                 <BooleanInput name="isPublic" label="Public Club?" />
               </div>
             </div>
@@ -39,15 +45,32 @@ function CreateClub() {
             />
 
             <div>
-              <h3 className="text-md mb-4 font-medium">Genres</h3>
+              <h3 className="text-lg font-medium mb-4">Genres</h3>
               <GenresInput />
             </div>
 
-            <TextAreaInput
-              name="rules"
-              labelText="Club Rules"
-              placeholder="List your club rules here..."
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <TextAreaInput
+                name="rules"
+                labelText="Club Rules"
+                placeholder="List your club rules here..."
+              />
+              <CounterInput name="capacity" label="Max Members" />
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-4">Current Book</h3>
+              <CurrentBookSelector />
+            </div>
+
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                className=" text-white px-6 py-3 rounded-lg font-medium"
+              >
+                Create Club
+              </Button>
+            </div>
           </div>
         </FormContainer>
       </div>
