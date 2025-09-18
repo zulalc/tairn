@@ -14,8 +14,13 @@ export function validateWithZodSchema<T>(
   return result.data;
 }
 
-export const profileSchema = z.object({
-  username: z.string().min(3).max(30),
+export const createUserSchema = z.object({
+  name: z.string().min(3).max(50),
+});
+
+export const updateUserSchema = z.object({
+  name: z.string().min(3).max(50).optional(),
+  username: z.string().min(3).max(30).optional(),
 });
 
 export const imageSchema = z.object({

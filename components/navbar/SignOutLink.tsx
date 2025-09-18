@@ -11,7 +11,10 @@ function SignOutLink() {
   };
   return (
     <SignOutButton redirectUrl="/">
-      <button className="w-full text-left" onClick={handleLogout}>
+      <button
+        className="w-full text-left cursor-pointer"
+        onClick={handleLogout}
+      >
         Logout
       </button>
     </SignOutButton>

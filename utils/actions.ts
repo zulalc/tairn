@@ -3,8 +3,9 @@ import db from "./db";
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import {
   clubSchema,
+  createUserSchema,
   imageSchema,
-  profileSchema,
+  updateUserSchema,
   validateWithZodSchema,
 } from "./schemas";
 import { redirect } from "next/navigation";
@@ -13,8 +14,10 @@ import { uploadImage } from "./supabase";
 
 const getAuthUser = async () => {
   const user = await currentUser();
-  if (!user) throw new Error("Please login to access this page");
-  if (!user.privateMetadata?.hasProfile) redirect("/profile/create");
+  if (!user) {
+    throw new Error("You must be logged in to access this route");
+  }
+  if (!user.privateMetadata.hasProfile) redirect("/profile/create");
   return user;
 };
 
@@ -23,24 +26,26 @@ export const fetchProfile = async () => {
   const profile = await db.user.findUnique({
     where: { clerkId: user.id },
   });
-  if (!profile) return redirect("/profile/create");
   return profile;
 };
 
-export const createProfileAction = async (
+export const createUserAction = async (
   prevState: { message?: string; error?: Record<string, string[]> },
   formData: FormData
 ) => {
   try {
-    const user = await getAuthUser();
+    const user = await currentUser();
+    if (!user) throw new Error("Please login to create a profile");
 
     const values = Object.fromEntries(formData);
-    const validatedData = validateWithZodSchema(profileSchema, values);
+
+    const validatedFields = validateWithZodSchema(createUserSchema, values);
 
     await db.user.create({
       data: {
         clerkId: user.id,
-        username: validatedData.username,
+        username: user.username!,
+        name: validatedFields.name,
         image: user.imageUrl ?? "",
       },
     });
@@ -52,22 +57,22 @@ export const createProfileAction = async (
         hasProfile: true,
       },
     });
-    console.log("Profile created successfully");
   } catch (error) {
-    console.error("Validation failed:", error);
-    return { message: "Profile creation failed", error };
+    return {
+      message: error instanceof Error ? error.message : "An error occurred",
+    };
   }
   redirect("/");
 };
 
-export const updateProfileAction = async (
+export const updateUserAction = async (
   prevState: { message?: string; error?: Record<string, string[]> },
   formData: FormData
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
   try {
     const values = Object.fromEntries(formData);
-    const validatedData = validateWithZodSchema(profileSchema, values);
+    const validatedData = validateWithZodSchema(updateUserSchema, values);
 
     if (validatedData.username) {
       const existingUser = await db.user.findUnique({
